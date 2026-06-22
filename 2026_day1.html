@@ -532,6 +532,7 @@ h2.hero-subtitle {
   <button id="prevBtn" onclick="changeSlide(-1)" disabled>&#8592;</button>
   <span id="nav-title"></span>
   <button id="nextBtn" onclick="changeSlide(1)">&#8594;</button>
+  <button id="fsBtn" onclick="toggleFullscreen()" title="Fullscreen" style="margin-left:8px;font-size:16px;padding:4px 10px;">⛶</button>
 </div>
 
 <script>
@@ -1048,6 +1049,28 @@ function updateProgress() {
   const pct = ((current + 1) / slides.length) * 100;
   document.getElementById('progress').style.width = pct + '%';
 }
+
+function syncFsBtn() {
+  const btn = document.getElementById('fsBtn');
+  const inFs = !!(document.fullscreenElement || document.webkitFullscreenElement);
+  btn.textContent = inFs ? '✕' : '⛶';
+  btn.title = inFs ? 'Exit Fullscreen' : 'Fullscreen';
+}
+
+function toggleFullscreen() {
+  const inFs = !!(document.fullscreenElement || document.webkitFullscreenElement);
+  if (!inFs) {
+    const el = document.documentElement;
+    if (el.requestFullscreen) el.requestFullscreen();
+    else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+  } else {
+    if (document.exitFullscreen) document.exitFullscreen();
+    else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+  }
+}
+
+document.addEventListener('fullscreenchange', syncFsBtn);
+document.addEventListener('webkitfullscreenchange', syncFsBtn);
 
 document.addEventListener('keydown', e => {
   if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changeSlide(1);
