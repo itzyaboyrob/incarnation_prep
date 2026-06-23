@@ -256,6 +256,14 @@ h2.hero-subtitle { font-family:'Inter',sans-serif; font-size:clamp(1rem,2.5vw,1.
 .reveal-item { background:var(--burgundy); color:#fff; border-radius:999px; padding:7px 20px; font-size:0.95rem; font-weight:500; opacity:0; transform:scale(0.85) translateY(6px); transition:opacity 0.4s ease, transform 0.4s ease; }
 .reveal-item.visible { opacity:1; transform:scale(1) translateY(0); }
 
+/* ── ROSARY STEP SLIDES ── */
+.rosary-step-wrap { display:flex; flex-direction:column; align-items:center; width:100%; max-width:820px; }
+.rosary-step-num { font-size:11px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:var(--burgundy-mid); margin-bottom:8px; }
+.rosary-step-bead { width:54px; height:54px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.4rem; font-weight:700; color:#fff; border:3px solid var(--amber); box-shadow:0 0 16px rgba(196,127,26,0.3); flex-shrink:0; }
+.rosary-prayer-card { background:var(--burgundy); border-radius:14px; padding:18px 24px; margin:8px 0; width:100%; max-width:700px; }
+.rosary-prayer-card .rpc-label { font-size:10px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--amber); margin-bottom:8px; }
+.rosary-prayer-card .rpc-text { font-size:1rem; color:rgba(255,255,255,0.88); line-height:1.8; }
+
 /* ── NAV ── */
 #nav { position:fixed; bottom:0; left:0; right:0; height:52px; background:var(--burgundy-dark); display:flex; align-items:center; justify-content:center; gap:16px; z-index:200; }
 #nav button { background:none; border:none; color:rgba(255,255,255,0.8); font-size:18px; cursor:pointer; padding:6px 14px; border-radius:8px; transition:background 0.2s, color 0.2s; font-weight:600; }
@@ -294,6 +302,125 @@ h2.hero-subtitle { font-family:'Inter',sans-serif; font-size:clamp(1rem,2.5vw,1.
 </div>
 
 <script>
+// ── ALL FOUR SETS OF MYSTERIES ──
+const ALL_MYSTERIES = {
+  joyful: {
+    label: "Joyful Mysteries",
+    emoji: "😊",
+    days: "Monday & Saturday",
+    color: "#FDF4DC",
+    textColor: "#8A5A10",
+    items: [
+      { name:"The Annunciation", description:"The Angel Gabriel appeared to Mary and told her she would be the Mother of God. Mary said yes — trusting God completely, even without knowing what it would cost her.", reflection:"Where is God asking me to say yes right now?" },
+      { name:"The Visitation", description:"Mary, newly pregnant, traveled to visit her cousin Elizabeth — who was also expecting. When Mary arrived, Elizabeth's baby leapt for joy, and Elizabeth called Mary 'blessed among women.'", reflection:"Who in my life needs me to show up for them the way Mary showed up for Elizabeth?" },
+      { name:"The Nativity", description:"Jesus was born in a stable in Bethlehem — not a palace, not a house, but a humble manger. God entered the world as a tiny, vulnerable baby.", reflection:"What does it mean that God chose to come into the world this way? What does that say about who He is?" },
+      { name:"The Presentation", description:"Mary and Joseph brought the infant Jesus to the Temple in Jerusalem to present Him to God. The prophet Simeon recognized Jesus as the Savior and blessed them.", reflection:"Are there moments in my own life where I've recognized God at work — even quietly?" },
+      { name:"Finding Jesus in the Temple", description:"When Jesus was twelve, He stayed behind in Jerusalem after Passover. Mary and Joseph searched for three days before finding Him in the Temple, amazing the teachers with His wisdom.", reflection:"Jesus said He had to be in His Father's house. How do I make time for God in my daily life?" }
+    ]
+  },
+  luminous: {
+    label: "Luminous Mysteries",
+    emoji: "✨",
+    days: "Thursday",
+    color: "#EFF3FB",
+    textColor: "#1B4F8C",
+    items: [
+      { name:"The Baptism of Jesus", description:"Jesus was baptized by John in the Jordan River. As He came up from the water, the heavens opened and the Father's voice said: 'This is my beloved Son, with whom I am well pleased.'", reflection:"At our own Baptism, God claimed us too. What does it mean to be called a beloved son or daughter of God?" },
+      { name:"The Wedding at Cana", description:"At a wedding, Mary noticed they had run out of wine and asked Jesus to help — even though His 'hour had not yet come.' He turned water into wine. It was His first miracle, and it happened because His mother asked.", reflection:"Have you ever asked someone to help even when it seemed like a long shot? Why do we keep asking even when we're not sure?" },
+      { name:"The Proclamation of the Kingdom", description:"Jesus traveled through towns and villages, preaching the Good News: 'Repent, for the Kingdom of God is at hand.' He called sinners, healed the sick, and invited everyone — the outcast, the poor, the forgotten.", reflection:"Who are the people in our world today that Jesus would have walked toward? Who might that include in our own lives?" },
+      { name:"The Transfiguration", description:"Jesus took Peter, James, and John up a mountain, and before their eyes He was transformed — His face shining like the sun, His clothes brilliant white. Moses and Elijah appeared beside Him, and the Father's voice spoke again.", reflection:"Have you ever had a moment where you felt God's presence very clearly — like something suddenly made sense? What was it like?" },
+      { name:"The Institution of the Eucharist", description:"At the Last Supper, Jesus took bread and wine and said: 'This is my body. This is my blood. Do this in memory of me.' He gave us the Eucharist — Himself — as the greatest gift.", reflection:"We receive this same gift at every Mass. Does knowing that change how you feel about going to Mass?" }
+    ]
+  },
+  sorrowful: {
+    label: "Sorrowful Mysteries",
+    emoji: "😔",
+    days: "Tuesday & Friday",
+    color: "#F5EAEC",
+    textColor: "#6B1E2E",
+    items: [
+      { name:"The Agony in the Garden", description:"Jesus went to the Garden of Gethsemane the night before He died. Knowing what was coming, He fell to the ground in anguish and prayed: 'Father, if it is possible, let this cup pass from me — yet not my will, but yours be done.' His disciples fell asleep. He faced it alone.", reflection:"Have you ever had to do something hard and felt completely alone? How did you find the strength to go through with it?" },
+      { name:"The Scourging at the Pillar", description:"Jesus was handed over to soldiers who beat Him savagely before His crucifixion. He endured this humiliation and pain without fighting back — not because He was weak, but because He chose to take it for us.", reflection:"Jesus suffered publicly and unjustly. Can you think of a time someone was treated unfairly and no one spoke up? What does His suffering say to us?" },
+      { name:"The Crowning with Thorns", description:"The soldiers mocked Jesus by pressing a crown of thorns onto His head and draping a purple robe on Him, shouting 'Hail, King of the Jews!' They were making fun of Him — but they were telling the truth. He is the King.", reflection:"Jesus was mocked for who He was. Have you or someone you know ever been made fun of for doing the right thing or believing in something?" },
+      { name:"The Carrying of the Cross", description:"Jesus was forced to carry the heavy wooden cross through the streets of Jerusalem. He fell. He got back up. Mary watched. Simon of Cyrene was pulled from the crowd to help carry it.", reflection:"Everyone has a cross to carry — something hard they didn't ask for. What does it look like to keep going anyway? Who helps you carry yours?" },
+      { name:"The Crucifixion", description:"Jesus was nailed to the cross and died. He forgave the people who killed Him. He comforted the thief beside Him. He entrusted His mother to His disciples. Then He said 'It is finished' — and gave up His spirit.", reflection:"Jesus' last words included forgiveness and love, even in the worst moment of His life. What does that tell us about what it really means to love someone?" }
+    ]
+  },
+  glorious: {
+    label: "Glorious Mysteries",
+    emoji: "✝",
+    days: "Wednesday & Sunday",
+    color: "#F0F7EE",
+    textColor: "#2D6A2D",
+    items: [
+      { name:"The Resurrection", description:"On the third day, Jesus rose from the dead. The tomb was empty. The women who came to anoint His body found the stone rolled away and an angel who said: 'He is not here. He has risen.'", reflection:"The Resurrection is the whole reason for our faith. If Jesus really rose from the dead, what does that change about how we live?" },
+      { name:"The Ascension", description:"Forty days after the Resurrection, Jesus gathered His disciples on a hillside and ascended into heaven before their eyes. He promised to send the Holy Spirit and to be with them always.", reflection:"Jesus left — but He promised to stay. Where do you find His presence in your daily life?" },
+      { name:"The Descent of the Holy Spirit", description:"On Pentecost, the Holy Spirit came upon the disciples like tongues of fire. They were transformed — from frightened people hiding in a room to bold witnesses who went out and changed the world.", reflection:"Confirmation is about receiving the Holy Spirit. What would it look like for that to actually change you — like it changed the disciples?" },
+      { name:"The Assumption of Mary", description:"At the end of her life, Mary was taken body and soul into heaven. She was preserved from death as a sign of what awaits all of us who live in God's grace.", reflection:"Mary's life was lived completely for God. What would it look like to live even one day completely focused on what God is asking of you?" },
+      { name:"The Coronation of Mary", description:"In heaven, Mary is crowned Queen — not because she sought power, but because she said yes to God in humility. Her crown is the fruit of her faithfulness.", reflection:"What do you think it means that the most honored person in heaven, after Jesus, is a woman who simply said yes? What does that say about how God sees greatness?" }
+    ]
+  }
+};
+
+let chosenMysterySet = 'sorrowful'; // default to today (Tuesday)
+
+function chooseMysterySet(setKey, cardEl) {
+  chosenMysterySet = setKey;
+  currentMysteryIndex = 0;
+  // Update card highlight
+  document.querySelectorAll('.mystery-chooser-card').forEach(c => {
+    c.style.opacity = c.dataset.set === setKey ? '1' : '0.55';
+    c.style.transform = c.dataset.set === setKey ? 'scale(1.03)' : 'scale(1)';
+  });
+  const set = ALL_MYSTERIES[setKey];
+  const msg = document.getElementById('mystery-set-msg');
+  if (msg) msg.innerHTML = `<strong>${set.emoji} ${set.label}</strong> selected — ${set.days}. Press → to begin Mystery 1.`;
+  // Advance to the player slide (index 29)
+  goToSlide(29);
+}
+
+let currentMysteryIndex = 0;
+
+function renderMysteryPlayer(index) {
+  const playerSlide = document.querySelector('.slide[data-index="29"]');
+  if (!playerSlide) return;
+  const set = ALL_MYSTERIES[chosenMysterySet];
+  const m = set.items[index];
+  currentMysteryIndex = index;
+  const body = playerSlide.querySelector('.slide-body');
+  if (!body) return;
+  body.innerHTML = `
+    <div class="ray"></div>
+    <div style="width:100%;max-width:820px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+        <button onclick="goToSlide(28)" style="background:none;border:1px solid rgba(107,30,46,0.25);border-radius:8px;padding:5px 12px;font-size:0.78rem;font-weight:700;color:var(--burgundy-mid);letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;">← Change Set</button>
+        <div style="display:flex;gap:6px;align-items:center;">
+          <span style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--burgundy-mid);margin-right:6px;">${set.label}</span>
+          ${set.items.map((_,i)=>`<div style="width:10px;height:10px;border-radius:50%;background:${i===index?'var(--amber)':'rgba(107,30,46,0.2)'};transition:background 0.3s;"></div>`).join('')}
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px;">
+        <div style="width:52px;height:52px;border-radius:50%;background:var(--burgundy);border:3px solid var(--amber);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;color:#fff;flex-shrink:0;">${index+1}</div>
+        <h2 class="slide-title" style="margin:0;">${m.name}</h2>
+      </div>
+      <div class="dark-box" style="margin-bottom:14px;">
+        <div class="db-title">Announce the Mystery</div>
+        <p>${m.description}</p>
+        <div style="margin-top:12px;font-style:italic;color:var(--amber);font-size:1rem;">💭 ${m.reflection}</div>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;">
+        <div style="background:var(--burgundy-light);border:2px solid var(--burgundy);border-radius:10px;padding:10px 18px;font-size:0.95rem;color:var(--burgundy);font-weight:600;">1 Our Father</div>
+        <div style="background:var(--burgundy-light);border:2px solid var(--burgundy-mid);border-radius:10px;padding:10px 18px;font-size:0.95rem;color:var(--burgundy);font-weight:600;">10 Hail Marys</div>
+        <div style="background:var(--amber-light);border:2px solid var(--amber);border-radius:10px;padding:10px 18px;font-size:0.95rem;color:var(--amber-dark);font-weight:600;">Glory Be</div>
+        <div style="background:var(--amber-light);border:2px solid var(--amber);border-radius:10px;padding:10px 18px;font-size:0.95rem;color:var(--amber-dark);font-weight:600;">Fatima Prayer</div>
+      </div>
+      <div style="display:flex;gap:10px;">
+        ${index > 0 ? `<button onclick="renderMysteryPlayer(${index-1})" style="background:var(--burgundy-light);border:2px solid var(--burgundy);border-radius:10px;padding:10px 20px;font-size:0.9rem;color:var(--burgundy);font-weight:600;cursor:pointer;">← Mystery ${index}</button>` : ''}
+        ${index < 4 ? `<button onclick="renderMysteryPlayer(${index+1})" style="background:var(--burgundy);border:none;border-radius:10px;padding:10px 20px;font-size:0.9rem;color:#fff;font-weight:600;cursor:pointer;margin-left:auto;">Mystery ${index+2} →</button>` : `<div style="margin-left:auto;background:var(--amber-light);border:2px solid var(--amber);border-radius:10px;padding:10px 20px;font-size:0.9rem;color:var(--amber-dark);font-weight:600;">All 5 done — press → to continue ✝</div>`}
+      </div>
+    </div>`;
+}
+
 const JOURNEY = [
   { icon:'👋', label:'Welcome',   slides:[0,1,2] },
   { icon:'⛪', label:'Mass',      slides:[3,4] },
@@ -301,7 +428,8 @@ const JOURNEY = [
   { icon:'🛡', label:'Virtues',   slides:[11,12,13,14,15] },
   { icon:'🦸', label:'Heroes',    slides:[16] },
   { icon:'🎭', label:'Activity',  slides:[17,18,19,20,21] },
-  { icon:'✝',  label:'Challenge', slides:[22,23,24] },
+  { icon:'📿', label:'Rosary',    slides:[22,23,24,25,26,27,28,29,30,31,32] },
+  { icon:'✝',  label:'Challenge', slides:[33,34,35] },
 ];
 
 const HEROES = [
@@ -668,7 +796,283 @@ const slides = [
     <div class="scenario-card fade-in" style="margin-top:12px;"><div class="sc-label">Group 4 · Fortitude</div><p>A group of students are mocking another kid's outfit. Everyone's laughing. They look at you to join in.</p></div>`
   },
 
-  // 22 — Charity in Action
+  // 22 — Rosary Intro
+  { title:"The Rosary", type:"hero", body:`
+    <div style="font-size:11px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:14px;opacity:0;transition:all 0.5s 0.1s ease" data-anim="hero-subtitle">📿 Workshop</div>
+    <h1 class="hero-title" style="opacity:0;transform:translateY(20px);transition:all 0.7s 0.2s ease" data-anim="hero-title">Praying the Rosary</h1>
+    <h2 class="hero-subtitle" style="opacity:0;transform:translateY(16px);transition:all 0.6s 0.5s ease" data-anim="hero-subtitle">By the end, you'll be able to pick up rosary beads and know exactly what prayer comes next.</h2>
+    <div style="margin-top:24px;display:flex;gap:16px;justify-content:center;flex-wrap:wrap;opacity:0;transition:all 0.6s 0.8s ease" data-anim="hero-subtitle">
+      <div style="background:rgba(255,255,255,0.08);border-radius:12px;padding:12px 20px;font-size:0.95rem;color:rgba(255,255,255,0.65);">🔵 Beads = a prayer map</div>
+      <div style="background:rgba(255,255,255,0.08);border-radius:12px;padding:12px 20px;font-size:0.95rem;color:rgba(255,255,255,0.65);">🙏 Pray with Mary, think about Jesus</div>
+      <div style="background:rgba(255,255,255,0.08);border-radius:12px;padding:12px 20px;font-size:0.95rem;color:rgba(255,255,255,0.65);">✝ 5 decades per full Rosary</div>
+    </div>`
+  },
+
+  // 23 — The Rosary Map (SVG visual)
+  { title:"The Rosary — Prayer Map", body:`
+    <div class="ray"></div>
+    <div class="section-badge">📿 The Beads</div>
+    <h2 class="slide-title">The Rosary Map</h2>
+    <div style="display:flex;gap:28px;align-items:flex-start;max-width:900px;margin-top:4px;">
+      <div style="flex-shrink:0;">
+        <svg id="rosary-svg" width="260" height="380" viewBox="0 0 260 380" xmlns="http://www.w3.org/2000/svg">
+          <!-- Tail: crucifix stem -->
+          <line x1="130" y1="340" x2="130" y2="310" stroke="#9B3A4E" stroke-width="2"/>
+          <!-- Crucifix -->
+          <rect x="122" y="340" width="16" height="28" rx="3" fill="#C47F1A"/>
+          <rect x="115" y="347" width="30" height="7" rx="3" fill="#C47F1A"/>
+          <circle cx="130" cy="344" r="5" fill="#3D0E1A" stroke="#C47F1A" stroke-width="1.5"/>
+          <!-- Tail chain -->
+          <line x1="130" y1="305" x2="130" y2="280" stroke="#9B3A4E" stroke-width="2"/>
+          <!-- Large bead 1 (Our Father - tail) -->
+          <circle cx="130" cy="272" r="10" fill="#6B1E2E" stroke="#C47F1A" stroke-width="2.5" id="rb-of1"/>
+          <line x1="130" y1="262" x2="130" y2="248" stroke="#9B3A4E" stroke-width="2"/>
+          <!-- 3 small beads (Hail Marys) -->
+          <circle cx="130" cy="242" r="7" fill="#9B3A4E" stroke="#C47F1A" stroke-width="1.5" id="rb-hm1"/>
+          <line x1="130" y1="235" x2="130" y2="226" stroke="#9B3A4E" stroke-width="2"/>
+          <circle cx="130" cy="220" r="7" fill="#9B3A4E" stroke="#C47F1A" stroke-width="1.5" id="rb-hm2"/>
+          <line x1="130" y1="213" x2="130" y2="204" stroke="#9B3A4E" stroke-width="2"/>
+          <circle cx="130" cy="198" r="7" fill="#9B3A4E" stroke="#C47F1A" stroke-width="1.5" id="rb-hm3"/>
+          <line x1="130" y1="191" x2="130" y2="180" stroke="#9B3A4E" stroke-width="2"/>
+          <!-- Junction to circle -->
+          <line x1="130" y1="180" x2="130" y2="166" stroke="#9B3A4E" stroke-width="2"/>
+          <!-- Circle of beads — center ~130,110, radius ~66 -->
+          <!-- Large bead at top (Our Father - decade connector) -->
+          <circle cx="130" cy="100" r="10" fill="#6B1E2E" stroke="#C47F1A" stroke-width="2.5" id="rb-of2"/>
+          <!-- Decade 1: beads going right from top (~1-2 o'clock positions) -->
+          <circle cx="157" cy="106" r="7" fill="#9B3A4E" stroke="#C47F1A" stroke-width="1.5" id="rb-d1b1"/>
+          <circle cx="178" cy="120" r="7" fill="#9B3A4E" stroke="#C47F1A" stroke-width="1.5" id="rb-d1b2"/>
+          <circle cx="190" cy="140" r="7" fill="#9B3A4E" stroke="#C47F1A" stroke-width="1.5" id="rb-d1b3"/>
+          <circle cx="194" cy="163" r="7" fill="#9B3A4E" stroke="#C47F1A" stroke-width="1.5" id="rb-d1b4"/>
+          <circle cx="188" cy="185" r="7" fill="#9B3A4E" stroke="#C47F1A" stroke-width="1.5" id="rb-d1b5"/>
+          <!-- Decade connector (Glory Be large bead) bottom-right -->
+          <circle cx="174" cy="204" r="10" fill="#6B1E2E" stroke="#C47F1A" stroke-width="2.5" id="rb-of3"/>
+          <!-- Decade 2 beads going to bottom -->
+          <circle cx="158" cy="220" r="7" fill="#9B3A4E" stroke="#C47F1A" stroke-width="1.5" id="rb-d2b1"/>
+          <circle cx="150" cy="238" r="7" fill="#9B3A4E" stroke="#C47F1A" stroke-width="1.5" id="rb-d2b2"/>
+          <circle cx="145" cy="257" r="7" fill="#9B3A4E" stroke="#C47F1A" stroke-width="1.5" id="rb-d2b3"/>
+          <circle cx="143" cy="277" r="7" fill="#9B3A4E" stroke="#C47F1A" stroke-width="1.5" id="rb-d2b4"/>
+          <!-- connector bottom -->
+          <circle cx="143" cy="296" r="10" fill="#6B1E2E" stroke="#C47F1A" stroke-width="2.5" id="rb-of4"/>
+          <!-- Decade 3 going left-bottom -->
+          <circle cx="135" cy="314" r="7" fill="#9B3A4E" stroke="#C47F1A" stroke-width="1.5" id="rb-d3b1"/>
+          <!-- (loop back up left side for remaining decades, simplified) -->
+          <circle cx="118" cy="310" r="7" fill="#9B3A4E" stroke="#C47F1A" stroke-width="1.5" id="rb-d3b2"/>
+          <circle cx="104" cy="297" r="7" fill="#9B3A4E" stroke="#C47F1A" stroke-width="1.5" id="rb-d3b3"/>
+          <circle cx="96" cy="280" r="7" fill="#9B3A4E" stroke="#C47F1A" stroke-width="1.5" id="rb-d3b4"/>
+          <circle cx="93" cy="261" r="7" fill="#9B3A4E" stroke="#C47F1A" stroke-width="1.5" id="rb-d3b5"/>
+          <circle cx="96" cy="242" r="10" fill="#6B1E2E" stroke="#C47F1A" stroke-width="2.5" id="rb-of5"/>
+          <!-- Decade 4 up left side -->
+          <circle cx="101" cy="224" r="7" fill="#9B3A4E" stroke="#C47F1A" stroke-width="1.5" id="rb-d4b1"/>
+          <circle cx="110" cy="207" r="7" fill="#9B3A4E" stroke="#C47F1A" stroke-width="1.5" id="rb-d4b2"/>
+          <circle cx="103" cy="191" r="7" fill="#9B3A4E" stroke="#C47F1A" stroke-width="1.5" id="rb-d4b3"/>
+          <circle cx="91" cy="178" r="7" fill="#9B3A4E" stroke="#C47F1A" stroke-width="1.5" id="rb-d4b4"/>
+          <circle cx="79" cy="163" r="7" fill="#9B3A4E" stroke="#C47F1A" stroke-width="1.5" id="rb-d4b5"/>
+          <circle cx="72" cy="145" r="10" fill="#6B1E2E" stroke="#C47F1A" stroke-width="2.5" id="rb-of6"/>
+          <!-- Decade 5 top-left -->
+          <circle cx="72" cy="125" r="7" fill="#9B3A4E" stroke="#C47F1A" stroke-width="1.5" id="rb-d5b1"/>
+          <circle cx="79" cy="107" r="7" fill="#9B3A4E" stroke="#C47F1A" stroke-width="1.5" id="rb-d5b2"/>
+          <circle cx="92" cy="95" r="7" fill="#9B3A4E" stroke="#C47F1A" stroke-width="1.5" id="rb-d5b3"/>
+          <circle cx="107" cy="88" r="7" fill="#9B3A4E" stroke="#C47F1A" stroke-width="1.5" id="rb-d5b4"/>
+          <circle cx="120" cy="85" r="7" fill="#9B3A4E" stroke="#C47F1A" stroke-width="1.5" id="rb-d5b5"/>
+          <!-- Labels -->
+          <text x="148" y="276" font-size="8" fill="#C47F1A" font-family="Inter,sans-serif">✝ Start</text>
+        </svg>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;gap:10px;">
+        <div style="background:var(--amber-light);border-left:4px solid var(--amber);border-radius:0 10px 10px 0;padding:12px 16px;">
+          <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--amber-dark);margin-bottom:4px;">✝ Crucifix</div>
+          <div style="font-size:0.95rem;color:var(--text);line-height:1.5;">Sign of the Cross + Apostles' Creed</div>
+        </div>
+        <div style="background:var(--burgundy-light);border-left:4px solid var(--burgundy);border-radius:0 10px 10px 0;padding:12px 16px;">
+          <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--burgundy-mid);margin-bottom:4px;">🟤 Large Bead</div>
+          <div style="font-size:0.95rem;color:var(--text);line-height:1.5;">Our Father</div>
+        </div>
+        <div style="background:var(--burgundy-light);border-left:4px solid var(--burgundy-mid);border-radius:0 10px 10px 0;padding:12px 16px;">
+          <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--burgundy-mid);margin-bottom:4px;">⚪ Small Beads (×3)</div>
+          <div style="font-size:0.95rem;color:var(--text);line-height:1.5;">Three Hail Marys — for Faith, Hope, Charity</div>
+        </div>
+        <div style="background:#F0F7EE;border-left:4px solid #4A8A4A;border-radius:0 10px 10px 0;padding:12px 16px;">
+          <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#2D6A2D;margin-bottom:4px;">🔵 Each Decade</div>
+          <div style="font-size:0.95rem;color:var(--text);line-height:1.5;">Our Father → 10 Hail Marys → Glory Be → Fatima Prayer</div>
+        </div>
+        <div style="background:#EFF3FB;border-left:4px solid #1B4F8C;border-radius:0 10px 10px 0;padding:12px 16px;">
+          <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#1B4F8C;margin-bottom:4px;">📿 Full Rosary</div>
+          <div style="font-size:0.95rem;color:var(--text);line-height:1.5;">5 decades → Hail Holy Queen → Sign of the Cross</div>
+        </div>
+      </div>
+    </div>`
+  },
+
+  // 24 — Rosary Step: Crucifix
+  { title:"Step 1 — The Crucifix", body:`
+    <div class="ray"></div>
+    <div class="rosary-step-wrap">
+      <div class="rosary-step-num">Step 1 of 8</div>
+      <div class="rosary-step-bead" style="background:var(--amber);">✝</div>
+      <h2 class="slide-title" style="text-align:center;margin-top:10px;">The Crucifix</h2>
+      <div class="rosary-prayer-card fade-in">
+        <div class="rpc-label">Sign of the Cross</div>
+        <div class="rpc-text">In the name of the Father,<br>and of the Son,<br>and of the Holy Spirit.<br><strong>Amen.</strong></div>
+      </div>
+      <div class="rosary-prayer-card fade-in">
+        <div class="rpc-label">Apostles' Creed</div>
+        <div class="rpc-text">I believe in God, the Father Almighty, Creator of heaven and earth, and in Jesus Christ, His only Son, our Lord, who was conceived by the Holy Spirit, born of the Virgin Mary, suffered under Pontius Pilate, was crucified, died and was buried…<br><em style="color:var(--amber-dark);">He rose again, ascended into heaven… I believe in the Holy Spirit, the holy Catholic Church… life everlasting.</em><br><strong>Amen.</strong></div>
+      </div>
+    </div>`
+  },
+
+  // 25 — Rosary Step: First Large Bead
+  { title:"Step 2 — Our Father", body:`
+    <div class="ray"></div>
+    <div class="rosary-step-wrap">
+      <div class="rosary-step-num">Step 2 of 8</div>
+      <div class="rosary-step-bead" style="background:var(--burgundy);">🟤</div>
+      <h2 class="slide-title" style="text-align:center;margin-top:10px;">First Large Bead — Our Father</h2>
+      <div class="rosary-prayer-card fade-in">
+        <div class="rpc-label">Our Father</div>
+        <div class="rpc-text">Our Father, who art in heaven,<br>hallowed be thy name;<br>thy kingdom come; thy will be done<br>on earth as it is in heaven.<br>Give us this day our daily bread,<br>and forgive us our trespasses,<br>as we forgive those who trespass against us;<br>and lead us not into temptation,<br>but deliver us from evil.<br><strong>Amen.</strong></div>
+      </div>
+    </div>`
+  },
+
+  // 26 — Rosary Step: Three Hail Marys
+  { title:"Step 3 — Three Hail Marys", body:`
+    <div class="ray"></div>
+    <div class="rosary-step-wrap">
+      <div class="rosary-step-num">Step 3 of 8</div>
+      <div style="display:flex;gap:8px;justify-content:center;margin-bottom:8px;">
+        <div class="rosary-step-bead" style="background:var(--burgundy-mid);font-size:0.75rem;width:42px;height:42px;">F</div>
+        <div class="rosary-step-bead" style="background:var(--burgundy-mid);font-size:0.75rem;width:42px;height:42px;">H</div>
+        <div class="rosary-step-bead" style="background:var(--burgundy-mid);font-size:0.75rem;width:42px;height:42px;">C</div>
+      </div>
+      <h2 class="slide-title" style="text-align:center;margin-top:6px;">Three Small Beads — Hail Mary × 3</h2>
+      <p class="body-text fade-in" style="text-align:center;margin-bottom:10px;">Each bead = one Hail Mary, offered for <strong>Faith</strong>, <strong>Hope</strong>, and <strong>Charity</strong>.</p>
+      <div class="rosary-prayer-card fade-in">
+        <div class="rpc-label">Hail Mary</div>
+        <div class="rpc-text">Hail Mary, full of grace, the Lord is with thee.<br>Blessed art thou among women,<br>and blessed is the fruit of thy womb, Jesus.<br>Holy Mary, Mother of God,<br>pray for us sinners,<br>now and at the hour of our death.<br><strong>Amen.</strong></div>
+      </div>
+    </div>`
+  },
+
+  // What Is a Mystery? — Why & How
+  { title:"What Is a Mystery?", body:`
+    <div class="ray"></div>
+    <div class="section-badge">🔵 The Mysteries</div>
+    <h2 class="slide-title">What Is a Mystery?</h2>
+    <div class="dark-box fade-in">
+      <div class="db-title">It's not a puzzle — it's a scene to enter.</div>
+      <p>In the Rosary, a "mystery" is a moment from the life of Jesus or Mary that we <em>meditate on</em> while we pray. We're not just reciting words — we're placing ourselves inside a story and asking: what does this moment say about God? About me?</p>
+    </div>
+    <div class="two-col fade-in" style="margin-top:14px;max-width:820px;">
+      <div class="highlight-box" style="margin:0;">
+        <div class="hb-label">Why do we do this?</div>
+        <p>Prayer is more than words. The mysteries give our minds and hearts something to hold onto — so we're praying <em>with</em> our whole selves, not just our lips.</p>
+      </div>
+      <div class="highlight-box" style="margin:0;">
+        <div class="hb-label">How does it work?</div>
+        <p>Before each decade, someone announces the mystery out loud. Then everyone holds that scene in mind — like a quiet picture — while praying the Our Father and ten Hail Marys.</p>
+      </div>
+    </div>
+    <div class="discuss-box fade-in" style="margin-top:14px;">
+      <div class="discuss-icon">💬</div>
+      <div class="discuss-text"><strong>Think about it</strong>Have you ever zoned out while praying? The mysteries are designed to keep your heart engaged — not just your mouth.</div>
+    </div>`
+  },
+
+  // Which Day = Which Set
+  { title:"Which Mysteries — Which Day?", body:`
+    <div class="ray"></div>
+    <div class="section-badge">📅 By Day of the Week</div>
+    <h2 class="slide-title">Which Mysteries Do You Pray?</h2>
+    <p class="body-text fade-in" style="margin-bottom:14px;">The Church traditionally assigns a different set of mysteries to each day of the week — so over the course of a week, you walk through the entire life of Jesus.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:820px;" class="fade-in">
+      <div class="mystery-chooser-card" data-set="joyful" style="background:#FDF4DC;border:2px solid transparent;cursor:pointer;border-radius:14px;padding:18px 20px;transition:border-color 0.2s,box-shadow 0.2s;" onclick="chooseMysterySet('joyful',this)">
+        <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--amber-dark);margin-bottom:4px;">😊 Joyful</div>
+        <div style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:var(--text);margin-bottom:4px;">Monday &amp; Saturday</div>
+        <div style="font-size:0.9rem;color:var(--text-muted);margin-bottom:8px;">The birth and childhood of Jesus</div>
+        <div style="font-size:0.8rem;font-weight:600;color:var(--amber-dark);letter-spacing:0.06em;">TAP TO SELECT →</div>
+      </div>
+      <div class="mystery-chooser-card" data-set="luminous" style="background:#EFF3FB;border:2px solid transparent;cursor:pointer;border-radius:14px;padding:18px 20px;transition:border-color 0.2s,box-shadow 0.2s;" onclick="chooseMysterySet('luminous',this)">
+        <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#1B4F8C;margin-bottom:4px;">✨ Luminous</div>
+        <div style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:var(--text);margin-bottom:4px;">Thursday</div>
+        <div style="font-size:0.9rem;color:var(--text-muted);margin-bottom:8px;">Jesus' public ministry</div>
+        <div style="font-size:0.8rem;font-weight:600;color:#1B4F8C;letter-spacing:0.06em;">TAP TO SELECT →</div>
+      </div>
+      <div class="mystery-chooser-card" data-set="sorrowful" style="background:var(--burgundy);border:3px solid var(--amber);box-shadow:0 0 18px rgba(196,127,26,0.3);cursor:pointer;border-radius:14px;padding:18px 20px;transition:border-color 0.2s,box-shadow 0.2s;" onclick="chooseMysterySet('sorrowful',this)">
+        <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--amber);margin-bottom:4px;">😔 Sorrowful ← Today</div>
+        <div style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:#fff;margin-bottom:4px;">Tuesday &amp; Friday</div>
+        <div style="font-size:0.9rem;color:rgba(255,255,255,0.7);margin-bottom:8px;">Jesus' suffering and death</div>
+        <div style="font-size:0.8rem;font-weight:600;color:var(--amber);letter-spacing:0.06em;">TAP TO SELECT →</div>
+      </div>
+      <div class="mystery-chooser-card" data-set="glorious" style="background:#F0F7EE;border:2px solid transparent;cursor:pointer;border-radius:14px;padding:18px 20px;transition:border-color 0.2s,box-shadow 0.2s;" onclick="chooseMysterySet('glorious',this)">
+        <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#2D6A2D;margin-bottom:4px;">✝ Glorious</div>
+        <div style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:var(--text);margin-bottom:4px;">Wednesday &amp; Sunday</div>
+        <div style="font-size:0.9rem;color:var(--text-muted);margin-bottom:8px;">The Resurrection and Heaven</div>
+        <div style="font-size:0.8rem;font-weight:600;color:#2D6A2D;letter-spacing:0.06em;">TAP TO SELECT →</div>
+      </div>
+    </div>
+    <div class="highlight-box fade-in" style="margin-top:14px;"><p id="mystery-set-msg">Tap a set above to load those mysteries. It's Tuesday — <strong>Sorrowful</strong> is already selected.</p></div>`
+  },
+
+  // 28 — Mystery Player (dynamic — renders chosen set)
+  { title:"The Mysteries", isMysteryPlayer: true, body:`` },
+
+  // Glory Be + Fatima
+  { title:"Step 6 — Glory Be & Fatima Prayer", body:`
+    <div class="ray"></div>
+    <div class="rosary-step-wrap">
+      <div class="rosary-step-num">Step 6 of 12</div>
+      <div class="rosary-step-bead" style="background:var(--amber);">✨</div>
+      <h2 class="slide-title" style="text-align:center;margin-top:10px;">After Each Decade</h2>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:800px;margin:0 auto;" class="fade-in">
+        <div class="rosary-prayer-card" style="margin:0;">
+          <div class="rpc-label">Glory Be</div>
+          <div class="rpc-text">Glory be to the Father,<br>and to the Son,<br>and to the Holy Spirit.<br>As it was in the beginning,<br>is now, and ever shall be,<br>world without end.<br><strong>Amen.</strong></div>
+        </div>
+        <div class="rosary-prayer-card" style="margin:0;">
+          <div class="rpc-label">Fatima Prayer</div>
+          <div class="rpc-text">O my Jesus,<br>forgive us our sins,<br>save us from the fires of hell,<br>lead all souls to Heaven,<br>especially those most in need<br>of Thy mercy.<br><strong>Amen.</strong></div>
+        </div>
+      </div>
+      <div class="highlight-box fade-in" style="margin-top:14px;text-align:center;"><p>Then announce the next mystery and repeat — five times total.</p></div>
+    </div>`
+  },
+
+  // 30 — Rosary Step: Full Pattern
+  { title:"Step 7 — The Full Pattern", body:`
+    <div class="ray"></div>
+    <div class="rosary-step-wrap">
+      <div class="rosary-step-num">Step 7 of 12</div>
+      <div class="rosary-step-bead" style="background:var(--burgundy);">5×</div>
+      <h2 class="slide-title" style="text-align:center;margin-top:10px;">The Full Rosary Pattern</h2>
+      <ul class="bullet-list fade-in" style="max-width:680px;margin:0 auto;">
+        <li><strong>Crucifix:</strong> Sign of the Cross + Apostles' Creed</li>
+        <li><strong>First large bead:</strong> Our Father</li>
+        <li><strong>3 small beads:</strong> Hail Mary × 3 (Faith, Hope, Charity)</li>
+        <li><strong>Glory Be</strong> — then enter the 5 decades</li>
+        <li><strong>Each decade:</strong> Announce mystery → Our Father → 10 Hail Marys → Glory Be → Fatima Prayer</li>
+        <li><strong>After all 5:</strong> Hail Holy Queen → Sign of the Cross</li>
+      </ul>
+    </div>`
+  },
+
+  // 31 — Rosary Step: Hail Holy Queen
+  { title:"Step 8 — Closing Prayer", body:`
+    <div class="ray"></div>
+    <div class="rosary-step-wrap">
+      <div class="rosary-step-num">Step 8 of 12</div>
+      <div class="rosary-step-bead" style="background:var(--burgundy);">👑</div>
+      <h2 class="slide-title" style="text-align:center;margin-top:10px;">Hail Holy Queen</h2>
+      <div class="rosary-prayer-card fade-in">
+        <div class="rpc-label">Closing Prayer — After All Five Decades</div>
+        <div class="rpc-text">Hail, Holy Queen, Mother of Mercy,<br>our life, our sweetness, and our hope.<br>To thee do we cry, poor banished children of Eve.<br>To thee do we send up our sighs,<br>mourning and weeping in this valley of tears.<br>Turn then, most gracious advocate,<br>thine eyes of mercy toward us,<br>and after this our exile,<br>show unto us the blessed fruit of thy womb, Jesus.<br>O clement, O loving, O sweet Virgin Mary.<br>Pray for us, O holy Mother of God,<br>that we may be made worthy of the promises of Christ.<br><strong>Amen.</strong></div>
+      </div>
+      <div class="highlight-box fade-in" style="margin-top:12px;"><p>Finish with the Sign of the Cross. The Rosary is complete. ✝</p></div>
+    </div>`
+  },
+
+  // 32 — Charity in Action
   { title:"Charity in Action", body:`
     <div class="ray"></div>
     <div class="section-badge">💛 Together</div>
@@ -844,6 +1248,12 @@ function animateSlide(slideEl) {
 
   if (slideEl.querySelector('#hero-card-grid')) buildHeroCards();
   if (slideEl.querySelector('#game-grid')) buildGameCards();
+  // Mystery player slide
+  const idx = parseInt(slideEl.dataset.index);
+  if (!isNaN(idx) && slides[idx] && slides[idx].isMysteryPlayer) {
+    currentMysteryIndex = 0;
+    setTimeout(() => renderMysteryPlayer(0), 50); // slight delay ensures DOM is ready
+  }
 }
 
 function init() {
@@ -857,6 +1267,19 @@ function init() {
 function changeSlide(dir) {
   const deck = document.getElementById('deck');
   const oldSlide = deck.querySelector('.slide.active');
+  // If we're ON the mystery player and going back, always jump to chooser (slide 28)
+  if (dir === -1 && slides[current] && slides[current].isMysteryPlayer) {
+    goToSlide(28); // 28 = Which Mysteries chooser
+    return;
+  }
+  // If we're ON the mystery player and going forward, only advance if all 5 done
+  if (dir === 1 && slides[current] && slides[current].isMysteryPlayer) {
+    if (currentMysteryIndex < 4) {
+      renderMysteryPlayer(currentMysteryIndex + 1);
+      return;
+    }
+    // All 5 done — fall through to advance deck slide
+  }
   const newIdx = current + dir;
 
   // If going FORWARD and current slide has a hidden reveal not yet shown — show it first
@@ -892,6 +1315,33 @@ function changeSlide(dir) {
   setTimeout(()=>{ oldSlide.classList.remove('exit'); oldSlide.style.transform=''; oldSlide.style.opacity=''; }, 600);
 
   current = newIdx;
+  updateJourney(); updateNav(); updateProgress();
+}
+
+function goToSlide(targetIdx) {
+  const deck = document.getElementById('deck');
+  const oldSlide = deck.querySelector('.slide.active');
+  if (targetIdx < 0 || targetIdx >= slides.length || targetIdx === current) return;
+  if (!oldSlide) return;
+  const newSlide = deck.querySelector(`.slide[data-index="${targetIdx}"]`);
+  if (!newSlide) return;
+  const dir = targetIdx > current ? 1 : -1;
+  oldSlide.classList.add('exit');
+  oldSlide.classList.remove('active');
+  newSlide.style.transform = dir > 0 ? 'translateY(28px)' : 'translateY(-28px)';
+  newSlide.style.opacity = '0';
+  newSlide.style.transition = 'none';
+  requestAnimationFrame(()=>{
+    requestAnimationFrame(()=>{
+      newSlide.style.transition = '';
+      newSlide.classList.add('active');
+      newSlide.style.transform = '';
+      newSlide.style.opacity = '';
+      animateSlide(newSlide);
+    });
+  });
+  setTimeout(()=>{ oldSlide.classList.remove('exit'); oldSlide.style.transform=''; oldSlide.style.opacity=''; }, 600);
+  current = targetIdx;
   updateJourney(); updateNav(); updateProgress();
 }
 
